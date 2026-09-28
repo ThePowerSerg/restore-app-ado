@@ -1,4 +1,5 @@
 using API.Data;
+using API.Entities;
 using API.Middleware;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,13 @@ builder.Services.AddDbContext<StoreContext>(options =>
 builder.Services.AddOpenApi();
 builder.Services.AddCors();
 
+// Add identity API endpoints for the User entity
+builder.Services.AddIdentityApiEndpoints<User>(options =>
+{
+   options.User.RequireUniqueEmail = true;
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,6 +33,7 @@ if (app.Environment.IsDevelopment())
 
 // just an expection value 
 //app.UseMiddleware<ExceptionMiddleware>();
+
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
@@ -35,8 +44,12 @@ app.UseCors(opt =>
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+// Authentication and authorization middleware
+app.UseAuthentication(); // Identifies the user based on their credentials
+app.UseAuthorization(); // Authorizes the user based on their roles and permissions
+app.MapGroup("api").MapIdentityApi<User>(); //api/login
 
+// Controllers middleware
 app.MapControllers();
 app.MapFallbackToController("Index", "Fallback");
 
