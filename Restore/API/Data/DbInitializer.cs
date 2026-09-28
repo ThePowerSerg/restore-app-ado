@@ -39,8 +39,8 @@ namespace API.Data
                     UserName = "admin@test.com",
                     Email = "admin@test.com"
                 };
-                await userManager.CreateAsync(user, "Pa$$w0rd123");
-                await userManager.AddToRolesAsync(user, ["Admin", "Member"]);
+                await userManager.CreateAsync(admin, "Pa$$w0rd123");
+                await userManager.AddToRolesAsync(admin, ["Member", "Admin"]);
 
             }
 
